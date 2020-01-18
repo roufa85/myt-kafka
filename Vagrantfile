@@ -2,6 +2,10 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "centos/7"
   config.vm.provider "virtualbox"
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "2048"
+    vb.cpus = "1"
+end
   
   config.vm.define "node1" do |node1|
     node1.vm.network "private_network", ip: "192.168.2.111"
