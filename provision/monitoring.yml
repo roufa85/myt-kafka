@@ -1,0 +1,136 @@
+---
+
+- hosts: node1
+  gather_facts: true
+  become: true
+  tasks:
+    
+    - name: Install a list of packages
+      yum:
+        name:
+         - fontconfig
+         - freetype*
+         - urw-fonts
+         - initscripts
+         - wget
+        state: present
+
+    - name: Add Grafana YUM Repo
+      yum_repository:
+        name: grafana
+        description: Grafana YUM repo
+        baseurl: https://packages.grafana.com/oss/rpm
+        repo_gpgcheck: yes
+        enabled: yes
+        gpgcheck: yes
+        gpgkey: https://packages.grafana.com/gpg.key
+        sslverify: yes
+        sslcacert: /etc/pki/tls/certs/ca-bundle.crt
+
+    - name: Install Grafana
+      yum:
+        name:
+         - grafana
+        state: present
+
+
+    - name: Start service grafana-server, if not started
+      service:
+        name: grafana-server
+        state: started
+
+    - name: Enable service grafana-server
+      service:
+        name: grafana-server
+        enabled: yes
+
+    - name: Add the user prometheus
+      user:
+        name: prometheus
+        create_home: false
+        shell: /bin/false
+
+    - name: Create directories
+      file:
+        path: '{{ item }}'
+        state: directory
+      loop:
+        - /etc/prometheus
+        - /var/lib/prometheus
+
+    - name: Cnange prom lib owner
+      file:
+        path: /var/lib/prometheus
+        owner: prometheus
+        group: prometheus
+    
+    # - name: Download prometheus binaries
+    #   get_url:
+    #     url: https://github.com/prometheus/prometheus/releases/download/v2.7.1/prometheus-2.7.1.linux-amd64.tar.gz
+    #     dest: /tmp/prometheus.tar.gz
+
+    - name: Download & Unarchive prometheus binaries
+      unarchive:
+        src: https://github.com/prometheus/prometheus/releases/download/v2.7.1/prometheus-2.7.1.linux-amd64.tar.gz
+        dest: /tmp
+        remote_src: true
+
+    - name: Move binaries and config
+      command: mv /tmp/prometheus-2.7.1.linux-amd64/console_libraries /etc/prometheus
+      ignore_errors: true
+
+    - name: Move binaries and config
+      command: mv /tmp/prometheus-2.7.1.linux-amd64/consoles /etc/prometheus
+      ignore_errors: true
+      
+    - name: Move Yaml config
+      command: mv /tmp/prometheus-2.7.1.linux-amd64/prometheus.yml /etc/prometheus
+      ignore_errors: true
+
+    - name: Cnange prom lib owner
+      file:
+        path: /etc/prometheus
+        owner: prometheus
+        group: prometheus
+        recurse: true
+
+    - name: Move binaries and config
+      command: mv /tmp/prometheus-2.7.1.linux-amd64/prometheus /usr/local/bin/
+      ignore_errors: true
+
+    - name: Move binaries and config
+      command: mv /tmp/prometheus-2.7.1.linux-amd64/promtool /usr/local/bin/
+      ignore_errors: true
+
+    - name: Cnange prom lib owner
+      file:
+        path: /usr/local/bin/prometheus
+        owner: prometheus
+        group: prometheus
+
+    - name: Cnange prom lib owner
+      file:
+        path: /usr/local/bin/promtool
+        owner: prometheus
+        group: prometheus
+
+    - name: Create Prom Service file
+      template:
+        src: templates/prometheus.service.j2
+        dest: /etc/systemd/system/prometheus.service
+      notify:
+        - reload systemctl
+    
+    - name: Start service prometheus, if not started
+      service:
+        name: prometheus
+        state: started
+
+    - name: Enable service prometheus
+      service:
+        name: prometheus
+        enabled: yes
+
+  handlers:
+    - name: reload systemctl
+      command: systemctl daemon-reload
