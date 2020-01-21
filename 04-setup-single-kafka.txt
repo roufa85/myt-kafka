@@ -102,6 +102,6 @@ sudo service kafka start
 
 sudo service kafka status
 
-./bin/kafka-topics.sh --zookeeper zookeeper1:2181/kafka --create --topic test --replication-factor 1 --partitions 3
+/opt/kafka/bin/kafka-topics.sh --zookeeper zookeeper1:2181/kafka --create --topic test --replication-factor 1 --partitions 3
 
-./bin/kafka-topics.sh --zookeeper zookeeper1:2181/kafka --topic test --describe
+/opt/kafka/bin/kafka-topics.sh --zookeeper zookeeper1:2181/kafka --topic test --describe

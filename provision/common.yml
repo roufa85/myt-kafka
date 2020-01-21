@@ -33,8 +33,8 @@
         state: directory
       loop:
         - /opt/kafka
-        - /data/zookeeper
-        - /data/kafka
+        # - /data/zookeeper
+        # - /data/kafka
 
     - name: Download & Unarchive Kafka binaries
       unarchive:
@@ -42,4 +42,16 @@
         dest: /opt/kafka/
         remote_src: true
         extra_opts: [--strip-components=1]
+
+    - name: Download JMX Prometheus Exporter
+      get_url:
+        url: https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.12.0/jmx_prometheus_javaagent-0.12.0.jar
+        dest: /etc/prometheus
+        group: prometheus
+        owner: prometheus
+        mode: '0644'
+        remote_src: true
+
+
+
 

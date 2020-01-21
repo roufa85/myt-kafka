@@ -83,11 +83,26 @@
       command: mv /tmp/prometheus-2.7.1.linux-amd64/consoles /etc/prometheus
       ignore_errors: true
       
-    - name: Move Yaml config
-      command: mv /tmp/prometheus-2.7.1.linux-amd64/prometheus.yml /etc/prometheus
-      ignore_errors: true
+    - name: Load Yaml config
+      copy: 
+        src: ./files/prometheus.yml
+        dest: /etc/prometheus
+        group: prometheus
+        owner: prometheus
+        mode: '0644'
 
-    - name: Cnange prom lib owner
+    - name: Set kafka and Zookeeper Prometheus Rules
+      copy: 
+        src: "{{ item }}"
+        dest: /etc/prometheus
+        group: prometheus
+        owner: prometheus
+        mode: '0644'
+      loop:
+        - ./files/kafka.yml
+        - ./files/zookeeper.yml
+
+    - name: Change prom lib owner
       file:
         path: /etc/prometheus
         owner: prometheus
