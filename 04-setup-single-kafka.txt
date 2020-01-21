@@ -1,0 +1,107 @@
+
+sudo mkdir -p /data/kafka
+
+sudo chown -R vagrant:vagrant /data/kafka
+
+cd /opt/kafka
+
+rm config/server.properties
+
+vi config/server.properties
+
+######################
+######################
+# change this for each broker
+broker.id=1
+# change this to the hostname of each broker
+advertised.listeners=PLAINTEXT://kafka1:9092
+# The ability to delete topics
+delete.topic.enable=true
+# Where logs are stored
+log.dirs=/data/kafka
+# default number of partitions
+num.partitions=3
+# default replica count based on the number of brokers
+default.replication.factor=1
+# to protect yourself against broker failure
+min.insync.replicas=1
+# logs will be deleted after how many hours
+log.retention.hours=168
+# size of the log files 
+log.segment.bytes=1073741824
+# check to see if any data needs to be deleted
+log.retention.check.interval.ms=300000
+# location of all zookeeper instances and kafka directory
+zookeeper.connect=zookeeper1:2181/kafka
+# timeout for connecting with zookeeper
+zookeeper.connection.timeout.ms=6000
+# automatically create topics
+auto.create.topics.enable=true
+######################
+######################
+
+sudo vi /etc/init.d/kafka
+
+######################
+######################
+#!/bin/bash
+#/etc/init.d/kafka
+DAEMON_PATH=/opt/kafka/bin
+DAEMON_NAME=kafka
+# Check that networking is up.
+#[ ${NETWORKING} = "no" ] && exit 0
+
+PATH=$PATH:$DAEMON_PATH
+
+# See how we were called.
+case "$1" in
+  start)
+        # Start daemon.
+        pid=`ps ax | grep -i 'kafka.Kafka' | grep -v grep | awk '{print $1}'`
+        if [ -n "$pid" ]
+          then
+            echo "Kafka is already running"
+        else
+          echo "Starting $DAEMON_NAME"
+          KAFKA_OPTS='-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7071:/etc/prometheus/kafka.yml' \
+          $DAEMON_PATH/kafka-server-start.sh -daemon /opt/kafka/config/server.properties
+        fi
+        ;;
+  stop)
+        echo "Shutting down $DAEMON_NAME"
+        $DAEMON_PATH/kafka-server-stop.sh
+        ;;
+  restart)
+        $0 stop
+        sleep 2
+        $0 start
+        ;;
+  status)
+        pid=`ps ax | grep -i 'kafka.Kafka' | grep -v grep | awk '{print $1}'`
+        if [ -n "$pid" ]
+          then
+          echo "Kafka is Running as PID: $pid"
+        else
+          echo "Kafka is not Running"
+        fi
+        ;;
+  *)
+        echo "Usage: $0 {start|stop|restart|status}"
+        exit 1
+esac
+
+exit 0
+######################
+######################
+
+sudo chmod +x /etc/init.d/kafka
+
+sudo chown root:root /etc/init.d/kafka
+
+sudo service kafka start
+
+sudo service kafka status
+
+./bin/kafka-topics.sh --zookeeper zookeeper1:2181/kafka --create --topic test --replication-factor 1 --partitions 3
+
+./bin/kafka-topics.sh --zookeeper zookeeper1:2181/kafka --topic test --describe

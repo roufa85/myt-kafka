@@ -1,0 +1,114 @@
+
+
+
+
+cd /opt/kafka
+
+sudo mkdir -p /data/zookeeper
+
+sudo chown -R vagrant:vagrant /data/zookeeper
+
+echo "1" > /data/zookeeper/myid
+
+rm config/zookeeper.properties
+
+vi config/zookeeper.properties
+
+######################
+######################
+# the directory where the snapshot is stored.
+dataDir=/data/zookeeper
+# the port at which the clients will connect
+clientPort=2181
+# setting number of connections to unlimited
+maxClientCnxns=0
+# keeps a heartbeat of zookeeper in milliseconds
+tickTime=2000
+# time for initial synchronization
+initLimit=10
+# how many ticks can pass before timeout
+syncLimit=5
+# define servers ip and internal ports to zookeeper
+server.1=zookeeper1:2888:3888
+######################
+######################
+
+sudo vi /etc/init.d/zookeeper
+
+######################
+######################
+#!/bin/bash
+#/etc/init.d/zookeeper
+DAEMON_PATH=/opt/kafka/bin
+DAEMON_NAME=zookeeper
+# Check that networking is up.
+#[ ${NETWORKING} = "no" ] && exit 0
+
+PATH=$PATH:$DAEMON_PATH
+
+case "$1" in
+  start)
+        # Start daemon.
+        pid=`ps ax | grep -i 'org.apache.zookeeper' | grep -v grep | awk '{print $1}'`
+        if [ -n "$pid" ]
+          then
+            echo "Zookeeper is already running";
+        else
+          echo "Starting $DAEMON_NAME";
+          $DAEMON_PATH/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+        fi
+        ;;
+  stop)
+        echo "Shutting down $DAEMON_NAME";
+        $DAEMON_PATH/zookeeper-server-stop.sh
+        ;;
+  restart)
+        $0 stop
+        sleep 2
+        $0 start
+        ;;
+  status)
+        pid=`ps ax | grep -i 'org.apache.zookeeper' | grep -v grep | awk '{print $1}'`
+        if [ -n "$pid" ]
+          then
+          echo "Zookeeper is Running as PID: $pid"
+        else
+          echo "Zookeeper is not Running"
+        fi
+        ;;
+  *)
+        echo "Usage: $0 {start|stop|restart|status}"
+        exit 1
+esac
+
+exit 0
+######################
+######################
+
+sudo chmod +x /etc/init.d/zookeeper
+
+sudo chown root:root /etc/init.d/zookeeper
+
+sudo service zookeeper start
+
+sudo service zookeeper status
+
+# verify it's started
+nc -vz localhost 2181
+
+echo "ruok" | nc localhost 2181 ; echo
+
+# check the logs
+cat logs/zookeeper.out
+
+
+
+
+
+
+
+
+
+
+
+

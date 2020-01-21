@@ -1,0 +1,17 @@
+sudo yum install nc java-1.8.0-openjdk -y
+
+java -version
+
+sudo swapoff -a
+
+sudo sed -i '/ swap / s/^/#/' /etc/fstab
+
+echo "192.168.2.111 kafka1
+192.168.2.111 zookeeper1" | sudo tee --append /etc/hosts
+
+wget http://mirror.cogentco.com/pub/apache/kafka/2.2.0/kafka_2.12-2.2.0.tgz
+
+tar -xvf kafka_2.12-2.2.0.tgz
+
+sudo mv kafka_2.12-2.2.0 /opt/kafka
+

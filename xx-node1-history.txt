@@ -1,0 +1,392 @@
+[vagrant@localhost prometheus]$ history 
+    1  sudo yum install java-1.8.0-openjdk -y
+    2  java -version
+    3  swapoff -a
+    4  sudo swapoff -a
+    5  sudo sed -i '/ swap / s/^/#/' /etc/fstab
+    6  echo "192.168.2.111 kafka1
+    7  192.168.2.111 zookeeper1" | sudo tee --append /etc/hosts
+    8  wget http://mirror.cogentco.com/pub/apache/kafka/2.2.0/kafka_2.12-2.2.0.tgz
+    9  tar -xvf kafka_2.12-2.2.0.tgz
+   10  sudo mv kafka_2.12-2.2.0 /opt/kafka
+   11  cd /opt/kafka
+   12  sudo mkdir -p /data/kafka
+   13  sudo mkdir -p /data/zookeeper
+   14  sudo chown -R vagrant:vagrant /data/kafka
+   15  sudo chown -R vagrant:vagrant /data/zookeeper
+   16  echo "1" > /data/zookeeper/myid
+   17  rm config/server.properties
+   18  vi config/server.properties
+   19  m config/zookeeper.properties
+   20  rm config/zookeeper.properties
+   21  vi config/zookeeper.properties
+   22  sudo vi /etc/init.d/zookeeper
+   23  sudo chmod +x /etc/init.d/zookeeper
+   24  sudo chown root:root /etc/init.d/zookeeper
+   25  sudo chkconfig zookeeper on
+   26  sudo init 6
+   27  sudo service zookeeper status
+   28  sudo service zookeeper start
+   29  sudo service zookeeper status
+   30  cd /opt/kafka/
+   31  less logs/zookeeper.out 
+   32  sysctl -w vm.max_map_count=200000
+   33  sudo sysctl -w vm.max_map_count=200000
+   34  sudo service zookeeper start
+   35  sudo service zookeeper status
+   36  sudo service zookeeper start
+   37  sysctl -w vm.max_map_count=200000
+   38  sudo sysctl -w vm.max_map_count=20000
+   39  less logs/zookeeper.out 
+   40  sudo sysctl -w vm.max_map_count=536870912
+   41  sudo service zookeeper start
+   42  sudo service zookeeper status
+   43  less logs/zookeeper.out 
+   44  sudo service zookeeper start
+   45  sudo service zookeeper status
+   46  sudo yum install nc  -y
+   47  #bin/zookeeper-shell.sh localhost:2181
+   48  cd /opt/kafka/
+   49  bin/zookeeper-shell.sh localhost:2181
+   50  echo "ruok" | nc localhost 2181 ; echo
+   51  nc -vz localhost 2181
+   52  cat logs/zookeeper.out
+   53  nc -vz localhost 2181
+   54  sudo vi /etc/init.d/kafka
+   55  sudo chmod +x /etc/init.d/kafka
+   56  sudo chown root:root /etc/init.d/kafka
+   57  sudo service kafka start
+   58  sudo service kafka status
+   59  ./bin/kafka-topics.sh --zookeeper zookeeper1:2181/kafka --create --topic test --replication-factor 1 --partitions 3
+   60  ./bin/kafka-topics.sh --zookeeper zookeeper1:2181/kafka --topic test --describe
+   61  cd /etc/prometheus
+   62  wget https://raw.githubusercontent.com/prometheus/jmx_exporter/master/example_configs/kafka-2_0_0.yml
+   63  sudo wget https://raw.githubusercontent.com/prometheus/jmx_exporter/master/example_configs/kafka-2_0_0.yml
+   64  ll
+   65  sudo wget https://raw.githubusercontent.com/prometheus/jmx_exporter/master/example_configs/kafka-2_0_0.yml kafka.yml
+   66  ll
+   67  rm kafka-2_0_0.yml.1
+   68  ll
+   69  sudo rm kafka-2_0_0.yml*
+   70  sudo wget -O kafka.yml https://raw.githubusercontent.com/prometheus/jmx_exporter/master/example_configs/kafka-2_0_0.yml
+   71  ll
+   72  cd /usr/local/bin/prometheus
+   73  wget https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.12.0/jmx_prometheus_javaagent-0.12.0.jar
+   74  sudo wget https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.12.0/jmx_prometheus_javaagent-0.12.0.jar
+   75  ll
+   76  sudo chown prometheus:prometheus kafka.yml 
+   77  sudo chown prometheus:prometheus jmx_prometheus_javaagent-0.12.0.jar 
+   78  ll
+   79  chmod a+r myfile
+   80  sudo chmod a+x jmx_prometheus_javaagent-0.12.0.jar 
+   81  ll
+   82  export KAFKA_OPTS=-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=8080:/etc/prometheus/kafka.yml
+   83  export KAFKA_OPTS=-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=8080:/etc/prometheus/kafka.ymlsudo service kafka start
+   84  sudo service kafka start
+   85  sudo service kafka stop
+   86  sudo service kafka status
+   87  sudo service kafka start
+   88  sudo service kafka status
+   89  printenv
+   90  export KAFKA_OPTS=-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=8080:/etc/prometheus/kafka.yml
+   91  printenv
+   92  sudo service kafka stop
+   93  sudo service kafka start
+   94  curl
+   95  curl localhost:8080/metrics
+   96  sudo export KAFKA_OPTS=-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=8080:/etc/prometheus/kafka.yml
+   97  netstap -tlnp | grep 8080
+   98  sudo yum install netstap -y
+   99  curl -s localhost:7071 | grep -i kafka | head
+  100  curl -s localhost:8080 | grep -i kafka | head
+  101  curl -s localhost:8080
+  102  export KAFKA_OPTS=-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7071:/etc/prometheus/kafka.yml
+  103  sudo service kafka stop
+  104  sudo service kafka start
+  105  curl -s localhost:7071
+  106  cd /opt/kafka/
+  107  sudo service kafka stop
+  108  ./bin/kafka-server-start.sh -daemon /opt/kafka/config/server.properties
+  109  sudo ./bin/kafka-server-start.sh -daemon /opt/kafka/config/server.properties
+  110  ps ax | grep -i 'kafka.Kafka' | grep -v grep | awk '{print $1}'
+  111  curl -s localhost:7071
+  112  export KAFKA_OPTS='-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7071:/etc/prometheus/kafka.yml'
+  113  ./bin/kafka-server-stop.sh 
+  114  sudo ./bin/kafka-server-stop.sh 
+  115  ps ax | grep -i 'kafka.Kafka' | grep -v grep | awk '{print $1}'
+  116  ls /etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar
+  117  ls /etc/prometheus/kafka.yml
+  118  cd /etc/prometheus/
+  119  ll
+  120  vi prometheus.yml 
+  121  sudo vi prometheus.yml 
+  122  less prometheus.yml 
+  123  sudo service prometheus stop
+  124  sudo service prometheus start
+  125  export KAFKA_OPTS='-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7071:/etc/prometheus/kafka.yml'
+  126  ps ax | grep -i 'kafka.Kafka' | grep -v grep | awk '{print $1}'
+  127  sudo ./bin/kafka-server-start.sh -daemon /opt/kafka/config/server.properties
+  128  source ~/.bash_profile
+  129  echo "export KAFKA_OPTS='-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7071:/etc/prometheus/kafka.yml'" |  sudo tee --append ~/.bash_profile
+  130  source ~/.bash_profile
+  131  sudo service kafka start
+  132  curl -s localhost:7071
+  133  printenv
+  134  less ~/.bash_profile
+  135  curl -s localhost:7071
+  136  sudo service kafka status
+  137  unset KAFKA_OPTS
+  138  printenv
+  139  less ~/.bash_profile
+  140  source ~/.bash_profile
+  141  printenv
+  142  unset KAFKA_OPTS
+  143  printenv
+  144  source ~/.bash_profile
+  145  printenv
+  146  sudo service kafka status
+  147  curl -s localhost:7071
+  148  curl -s localhost:7071/metrics
+  149  sudo service kafka stop
+  150  sudo KAFKA_HEAP_OPTS='"-Xmx1000M -Xms1000M"'KAFKA_OPTS='-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7071:/etc/prometheus/kafka.yml'JMX_PORT=7081 /opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties -daemon
+  151  sudo KAFKA_OPTS='-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7071:/etc/prometheus/kafka.yml'JMX_PORT=7081 /opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties -daemon
+  152  sudo KAFKA_OPTS='-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7071:/etc/prometheus/kafka.yml' JMX_PORT=7081 /opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties -daemon
+  153  sudo KAFKA_OPTS='-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7071:/etc/prometheus/kafka.yml' JMX_PORT=7081 /opt/kafka/bin/kafka-server-start.sh -daemon /opt/kafka/config/server.properties
+  154  ps ax | grep -i 'kafka.Kafka' | grep -v grep | awk '{print $1}'
+  155  sudo service kafka stop
+  156  ps ax | grep -i 'kafka.Kafka' | grep -v grep | awk '{print $1}'
+  157  sudo service kafka start
+  158  sudo service kafka stop
+  159  sudo vi /etc/init.d/kafka 
+  160  sudo service kafka start
+  161  cd /etc/prometheus
+  162  sudo wget https://raw.githubusercontent.com/prometheus/jmx_exporter/master/example_configs/zookeeper.yaml
+  163  ll
+  164  sudo chown prometheus:prometheus *.yml 
+  165  ll
+  166  sudo chown prometheus:prometheus zookeeper.yml 
+  167  sudo wget -O zookeeper.yml https://raw.githubusercontent.com/prometheus/jmx_exporter/master/example_configs/zookeeper.yaml
+  168  sudo chown prometheus:prometheus *.yml 
+  169  ll
+  170  sudo rm zookeeper.yaml 
+  171  ll
+  172  sudo vi /etc/init.d/zookeeper 
+  173  sudo service kafka stop
+  174  sudo service zookeeper stop
+  175  sudo service zookeeper start
+  176  sudo service zookeeper status
+  177  sudo service zookeeper start
+  178  sudo vi /etc/init.d/zookeeper 
+  179  sudo service zookeeper start
+  180  sudo service zookeeper status
+  181  sudo vi /etc/init.d/zookeeper 
+  182  sudo service zookeeper start
+  183  sudo service zookeeper stop
+  184  sudo service zookeeper start
+  185  sudo vi /etc/init.d/zookeeper 
+  186  sudo service zookeeper start
+  187  sudo vi /etc/init.d/zookeeper 
+  188  sudo service zookeeper start
+  189  curl -s localhost:7072/metrics
+  190  curl -s localhost:7072
+  191  sudo vi prometheus.yml 
+  192  sudo service prometheus stop
+  193  sudo service prometheus start
+  194  sudo service kafka status
+  195  sudo service kafka start
+  196  sudo service zookeeper status
+  197  sudo vi /etc/init.d/kafka 
+  198  sudo service kafka stop
+  199  sudo service kafka start
+  200  sudo service kafka status
+  201  sudo vi /etc/init.d/kafka 
+  202  sudo service kafka start
+  203  sudo service kafka status
+  204  sudo vi /etc/init.d/zookeeper 
+  205  sudo service kafka status
+  206  sudo service kafka stop
+  207  sudo service zookeeper stop
+  208  sudo service zookeeper start
+  209  sudo vi /etc/init.d/zookeeper 
+  210  sudo service zookeeper start
+  211  sudo vi /etc/init.d/zookeeper 
+  212  sudo service zookeeper start
+  213  sudo vi /etc/init.d/zookeeper 
+  214  sudo service zookeeper start
+  215  sudo service zookeeper stop
+  216  sudo service zookeeper start
+  217  sudo service zookeeper status
+  218  sudo service zookeeper stop
+  219  sudo vi /etc/init.d/zookeeper 
+  220  EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  221  /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  222  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  223  wget https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.12.0/jmx_prometheus_javaagent-0.3.0.jar
+  224  wget https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.12.0/jmx_prometheus_javaagent-0.6.0.jar
+  225  wget https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.3.0/jmx_prometheus_javaagent-0.3.0.jar
+  226  sudo wget https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.3.0/jmx_prometheus_javaagent-0.3.0.jar
+  227  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  228  ls /etc/prometheus/jmx_prometheus_javaagent-0.3.0.ja
+  229  ls /etc/prometheus/jmx_prometheus_javaagent-0.3.0.jar
+  230  ls /etc/prometheus/zookeeper.yml
+  231  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  232  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zoodkeeper.properties
+  233  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/
+  234  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -da
+  235  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh 
+  236  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh  /opt/kafka/config/zoodkeeper.properties
+  237  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  238  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh /opt/kafka/config/zookeeper.properties
+  239  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh /opt/kafka/config/zoodkeeper.properties
+  240  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  241  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh /opt/kafka/config/zookeeper.properties
+  242  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  243  sudo service zookeeper stop
+  244  vi /opt/kafka/config/zookeeper.properties
+  245  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  246  sudo service zookeeper status
+  247  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  248  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  249  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh  /opt/kafka/config/zookeeper.properties
+  250  sudo EX /opt/kafka/bin/zookeeper-server-start.sh  /opt/kafka/config/zookeeper.properties
+  251  sudo /opt/kafka/bin/zookeeper-server-start.sh  /opt/kafka/config/zookeeper.properties
+  252  sudo /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  253  sudo EXTRA_VARS="" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties 
+  254  sudo service zookeeper status
+  255  sudo service zookeeper stop
+  256  sudo EXTRA_VARS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties 
+  257  sudo service zookeeper status
+  258  sudo service kafka start
+  259  sudo service zookeeper status
+  260  sudo service kafka stop
+  261  sudo service zookeeper stop
+  262  sudo vi /etc/init.d/zookeeper 
+  263  sudo service zookeeper start
+  264  sudo service zookeeper status
+  265  sudo service kafka start
+  266  sudo vi /etc/init.d/zookeeper 
+  267  sudo service zookeeper stop
+  268  sudo service zookeeper start
+  269  sudo service kafka stop
+  270  sudo service kafka start
+  271  sudo service zookeeper start
+  272  sudo service kafka start
+  273  curl -s localhost:7072
+  274  curl -s localhost:7071
+  275  curl -s localhost:7072
+  276  sudo service zookeeper start
+  277  sudo vi /etc/init.d/zookeeper 
+  278  sudo service zookeeper stop
+  279  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  280  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  281  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaa-0.3.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  282  sudo EXTRA_ARGS="" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  283  sudo /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  284  sudo EXTRA_ARGS="" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  285  EXTRA_ARGS="" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  286  /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  287  vi /opt/kafka/bin/kafka-server-start.sh
+  288  sudo vi /opt/kafka/bin/kafka-server-start.sh
+  289  sudo EXTRA_ARGS="" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  290  sudo EXTRA_ARGS="" /opt/kafka/bin/zookeeper-server-start.sh  /opt/kafka/config/zookeeper.properties
+  291  sudo service zookeeper stop
+  292  sudo EXTRA_ARGS="" /opt/kafka/bin/zookeeper-server-start.sh  /opt/kafka/config/zookeeper.properties
+  293  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaa-0.3.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  294  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaa-0.3.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh /opt/kafka/config/zookeeper.properties
+  295  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaa-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh /opt/kafka/config/zookeeper.properties
+  296  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_java-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh /opt/kafka/config/zookeeper.properties
+  297  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  298  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh /opt/kafka/config/zookeeper.properties
+  299  sudo service zookeeper stop
+  300  sudo vi /etc/init.d/zookeeper 
+  301  sudo service zookeeper start
+  302  sudo service zookeeper stop
+  303  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh /opt/kafka/config/zookeeper.properties -daemon
+  304  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh /opt/kafka/config/zookeeper.properties
+  305  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  306  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh /opt/kafka/config/zookeeper.properties &
+  307  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.s /opt/kafka/config/zookeeper.properties 
+  308  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties 
+  309  sudo vi /opt/kafka/bin/zookeeper-server-start.sh
+  310  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties 
+  311  sudo EXTRA_ARGS=" -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties 
+  312  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml " /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties 
+  313  sudo vi /opt/kafka/bin/zookeeper-server-start.sh
+  314  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml " /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties 
+  315  /opt/kafka/bin/kafka-run-class.sh -daemon -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml org.apache.zookeeper.server.quorum.QuorumPeerMain /opt/kafka/config/zookeeper.properties
+  316  /opt/kafka/bin/kafka-run-class.sh -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml org.apache.zookeeper.server.quorum.QuorumPeerMain /opt/kafka/config/zookeeper.properties
+  317  sudo service zookeeper stop
+  318  /opt/kafka/bin/kafka-run-class.sh -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml org.apache.zookeeper.server.quorum.QuorumPeerMain /opt/kafka/config/zookeeper.properties
+  319  sudo service zookeeper stop
+  320  /opt/kafka/bin/kafka-run-class.sh -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7073:/etc/prometheus/zookeeper.yml org.apache.zookeeper.server.quorum.QuorumPeerMain /opt/kafka/config/zookeeper.properties
+  321  netstat -l
+  322  sudo yum install net-tools
+  323  netstat -l
+  324  netstap -tlnp | grep 8080
+  325  netstat -tlnp | grep 8080
+  326  sudo netstat -tlnp | grep 8080
+  327  sudo netstat -tlnp | grep 9072
+  328  sudo netstat -tlnp | grep 7072
+  329  sudo netstat -tlnp | grep 7071
+  330  sudo netstat -tlnp | grep 7073
+  331  less /etc/prometheus/zookeeper.yml
+  332  /opt/kafka/bin/kafka-run-class.sh -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7071:/etc/prometheus/zookeeper.yml org.apache.zookeeper.server.quorum.QuorumPeerMain /opt/kafka/config/zookeeper.properties
+  333  /opt/kafka/bin/kafka-run-class.sh -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml org.apache.zookeeper.server.quorum.QuorumPeerMain /opt/kafka/config/zookeeper.properties
+  334  /opt/kafka/bin/kafka-run-class.sh -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=9072:/etc/prometheus/zookeeper.yml org.apache.zookeeper.server.quorum.QuorumPeerMain /opt/kafka/config/zookeeper.properties
+  335  /opt/kafka/bin/kafka-run-class.sh -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=9000:/etc/prometheus/zookeeper.yml org.apache.zookeeper.server.quorum.QuorumPeerMain /opt/kafka/config/zookeeper.properties
+  336  /opt/kafka/bin/kafka-run-class.sh -Dcapsule.jvm.args="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=9000:/etc/prometheus/zookeeper.yml" org.apache.zookeeper.server.quorum.QuorumPeerMain /opt/kafka/config/zookeeper.properties
+  337  /opt/kafka/bin/kafka-run-class.sh -Dcapsule.jvm.ags="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" org.apache.zookeeper.server.quorum.QuorumPeerMain /opt/kafka/config/zookeeper.properties
+  338  /opt/kafka/bin/kafka-run-class.sh  org.apache.zookeeper.server.quorum.QuorumPeerMain /opt/kafka/config/zookeeper.properties
+  339  sudo netstat -tlnp | grep 7071
+  340  sudo service zookeeper stop
+  341  sudo service kafka stop
+  342  /opt/kafka/bin/kafka-run-class.sh  org.apache.zookeeper.server.quorum.QuorumPeerMain /opt/kafka/config/zookeeper.properties
+  343  printenv
+  344  unset KAFKA_OPTS
+  345  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  346  printenv
+  347  unset EXTRA_ARGS
+  348  sudo EXTRA_ARGS="-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  349  /opt/kafka/bin/kafka-run-class.sh -daemon -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml org.apache.zookeeper.server.quorum.QuorumPeerMain /opt/kafka/config/zookeeper.properties
+  350  /opt/kafka/bin/kafka-run-class.sh -daemon "-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" org.apache.zookeeper.server.quorum.QuorumPeerMain /opt/kafka/config/zookeeper.properties
+  351  /opt/kafka/bin/kafka-run-class.sh "-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" org.apache.zookeeper.server.quorum.QuorumPeerMain /opt/kafka/config/zookeeper.properties
+  352  /opt/kafka/bin/kafka-run-class.sh "-javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.0.jar=7072:/etc/prometheus/zookeeper.yml" org.apache.zookeeper.server.quorum.QuorumPeerMain /opt/kafka/config/zookeeper.properties
+  353  /opt/kafka/bin/kafka-run-class.sh  org.apache.zookeeper.server.quorum.QuorumPeerMain /opt/kafka/config/zookeeper.properties
+  354  sudo /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  355  /opt/kafka/bin/kafka-run-class.sh -daemon -name zookeeper -loggc org.apache.zookeeper.server.quorum.QuorumPeerMain /opt/kafka/config/zookeeper.properties
+  356  sudo /opt/kafka/bin/kafka-run-class.sh -daemon -name zookeeper -loggc org.apache.zookeeper.server.quorum.QuorumPeerMain /opt/kafka/config/zookeeper.properties
+  357  sudo service zookeeper status
+  358  sudo /opt/kafka/bin/kafka-run-class.sh -daemon -name zookeeper -loggc -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml org.apache.zookeeper.server.quorum.QuorumPeerMain /opt/kafka/config/zookeeper.properties
+  359  sudo service zookeeper status
+  360  sudo netstat -tlnp | grep 7072
+  361  sudo service zookeeper stop
+  362  sudo netstat -tlnp | grep 7072
+  363  sudo /opt/kafka/bin/kafka-run-class.sh -daemon -name zookeeper -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml org.apache.zookeeper.server.quorum.QuorumPeerMain /opt/kafka/config/zookeeper.properties
+  364  sudo netstat -tlnp | grep 7072
+  365  sudo /opt/kafka/bin/kafka-run-class.sh -daemon -name zookeeper -loggc -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml org.apache.zookeeper.server.quorum.QuorumPeerMain /opt/kafka/config/zookeeper.properties
+  366  sudo netstat -tlnp | grep 7072
+  367  sudo service zookeeper stop
+  368  sudo netstat -tlnp | grep 7072
+  369  sudo /opt/kafka/bin/kafka-run-class.sh -daemon -name zookeeper -loggc -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml org.apache.zookeeper.server.quorum.QuorumPeerMain /opt/kafka/config/zookeeper.properties
+  370  sudo netstat -tlnp | grep 7072
+  371  printenv
+  372  sudo vi /opt/kafka/bin/zookeeper-server-start.sh
+  373  sudo service zookeeper stop
+  374  sudo netstat -tlnp | grep 7072
+  375  sudo EXTRA_ARGS="-name zookeeper -loggc -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml" /opt/kafka/bin/zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+  376  sudo netstat -tlnp | grep 7072
+  377  sudo vi /etc/init.d/zookeeper 
+  378  sudo netstat -tlnp | grep 7072
+  379  sudo service zookeeper stop
+  380  sudo service zookeeper start
+  381  sudo netstat -tlnp | grep 7072
+  382  sudo service kafka start
+  383  sudo vi /opt/kafka/bin/kafka-server-start.sh
+  384  sudo service kafka stop
+  385  sudo service zookeeper stop
+  386  sudo service zookeeper start
+  387  sudo service kafka start
+  388  sudo vi /opt/kafka/bin/zookeeper-server-start.sh
+  389  cat /etc/init.d/zookeeper 
+  390  cat /etc/init.d/kafka 
+  391  history 
