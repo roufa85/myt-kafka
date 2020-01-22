@@ -145,15 +145,22 @@
       service:
         name: prometheus
         enabled: yes
-
-    - name: Copy Configuration file prometheus datasource to Grafana
-      copy:
-        src: ./scripts/configure_grafana.sh
-        dest: /tmp/grafana_admin.sh
-        mode: a+x
-
+        
     - name: Configure Prometheus as datasource to Grafana
-      shell: /tmp/configure_grafana.sh
+      uri: 
+        force: True
+        force_basic_auth: True
+        user: "admin"
+        password: "admin"
+        url: "http://localhost:3000/api/datasources"
+        body_format: "json"
+        method: "POST"
+        validate_certs: False
+        body: "{{ lookup('template', 'templates/grafana_datasource_post_payload.j2') }}"
+      register: grafana_api_result
+      vars:
+        prometheus_host: "http://localhost:9090"
+      ignore_errors: true
 
     - name: Create Kafka user in Grafana
       uri: 
@@ -165,7 +172,7 @@
         body_format: "json"
         method: "POST"
         validate_certs: False
-        body: "{{ lookup('template', 'templates/grafana_admin_post_query.j2') }}"
+        body: "{{ lookup('template', 'templates/grafana_admin_post_payload.j2') }}"
       register: grafana_api_result
       ignore_errors: true
 
@@ -179,7 +186,7 @@
         body_format: "json"
         method: "PATCH"
         validate_certs: False
-        body: "{{ lookup('template', 'templates/grafana_admin_put_query.j2') }}"
+        body: "{{ lookup('template', 'templates/grafana_admin_put_payload.j2') }}"
       register: grafana_api_result
       ignore_errors: true
 
