@@ -23,6 +23,6 @@ $ vagrant ssh controller
 ```
 
 ```
-[vagrant@localhost vagrant]$ cd /vagrant/provision/
+[vagrant@localhost vagrant]$ cd /vagrant
 [vagrant@localhost vagrant]$ ansible-playbook provision/common.yml -i inventory 
 ```

@@ -146,6 +146,61 @@
         name: prometheus
         enabled: yes
 
+    - name: Copy Configuration file prometheus datasource to Grafana
+      copy:
+        src: ./scripts/configure_grafana.sh
+        dest: /tmp/grafana_admin.sh
+        mode: a+x
+
+    - name: Configure Prometheus as datasource to Grafana
+      shell: /tmp/configure_grafana.sh
+
+    - name: Create Kafka user in Grafana
+      uri: 
+        force: True
+        force_basic_auth: True
+        user: "admin"
+        password: "admin"
+        url: "http://localhost:3000/api/admin/users/"
+        body_format: "json"
+        method: "POST"
+        validate_certs: False
+        body: "{{ lookup('template', 'templates/grafana_admin_post_query.j2') }}"
+      register: grafana_api_result
+      ignore_errors: true
+
+    - name: Set Kafka user as Admin in Grafana
+      uri: 
+        force: True
+        force_basic_auth: True
+        user: "admin"
+        password: "admin"
+        url: "http://localhost:3000/api/org/users/{{ grafana_api_result.json.id }}/"
+        body_format: "json"
+        method: "PATCH"
+        validate_certs: False
+        body: "{{ lookup('template', 'templates/grafana_admin_put_query.j2') }}"
+      register: grafana_api_result
+      ignore_errors: true
+
+    - name: Upload dashboards
+      uri: 
+        force: True
+        force_basic_auth: True
+        user: "admin"
+        password: "admin"
+        url: "http://localhost:3000/api/dashboards/db"
+        body_format: "json"
+        method: "POST"
+        validate_certs: False
+        body: "{{ lookup('file', 'templates/{{ dashboard_payload }}') }}"
+      register: grafana_api_result
+      vars:
+        dashboard_payload: "{{ item }}"
+      with_items:
+        - kafka_dashboard.json.j2
+      ignore_errors: true
+
   handlers:
     - name: reload systemctl
       command: systemctl daemon-reload
