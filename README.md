@@ -24,7 +24,7 @@ $ vagrant ssh controller
 
 ```
 [vagrant@localhost vagrant]$ cd /vagrant
-[vagrant@localhost vagrant]$ ansible-playbook provision/common.yml -i inventory 
+[vagrant@localhost vagrant]$ ansible-playbook --inventory-file=ansible/inventory -v ansible/playbooks/setup.yml 
 ```
 
 Create Topic:

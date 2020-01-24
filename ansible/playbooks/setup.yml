@@ -1,0 +1,10 @@
+---
+
+- hosts: node1
+  gather_facts: true
+  become: true
+  roles:
+    - monitoring
+    - common
+    - zookeeper
+    - kafka

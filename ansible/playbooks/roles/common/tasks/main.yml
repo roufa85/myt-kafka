@@ -1,0 +1,45 @@
+---
+- name: Install a list of packages
+  yum:
+    name:
+      - nc
+      - java-1.8.0-openjdk
+    state: present
+
+- name: disable Swap
+  command: swapoff -a
+
+- name: disable fstab
+  command: sed -i '/ swap / s/^/#/' /etc/fstab
+
+- name: add nodes to known hosts
+  lineinfile:
+    dest: /etc/hosts
+    line: "{{ item.addr }} {{ item.name }}"
+    state: present
+  with_items:
+    - { addr: '192.168.2.111', name: 'kafka1' }
+    - { addr: '192.168.2.111', name: 'zookeeper1' }
+
+- name: Create directories
+  file:
+    path: '{{ item }}'
+    state: directory
+  loop:
+    - /opt/kafka
+
+- name: Download & Unarchive Kafka binaries
+  unarchive:
+    src: http://mirror.cogentco.com/pub/apache/kafka/2.2.0/kafka_2.12-2.2.0.tgz
+    dest: /opt/kafka/
+    remote_src: true
+    extra_opts: [--strip-components=1]
+
+- name: Download JMX Prometheus Exporter
+  get_url:
+    url: https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.12.0/jmx_prometheus_javaagent-0.12.0.jar
+    dest: /etc/prometheus
+    group: prometheus
+    owner: prometheus
+    mode: '0644'
+    remote_src: true

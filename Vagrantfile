@@ -28,47 +28,21 @@ end
     
     machine.vm.provision "shell", path: "scripts/update_hostkeys.sh"
 
-    machine.vm.synced_folder "provision/", "/vagrant/provision"
+    machine.vm.synced_folder "ansible/", "/vagrant/ansible"
 
     machine.vm.provision :ansible_local do |ansible|
-      ansible.playbook       = "provision/playbook.yml"
-      ansible.verbose        = true
+      ansible.playbook       = "ansible/playbooks/ping.yml"
       ansible.install        = true
-      ansible.limit          = "all" # or only "node1" group for monitoring stack.
-      ansible.inventory_path = "inventory"
+      ansible.limit          = "all"
+      ansible.inventory_path = "ansible/inventory"
     end
 
-    # machine.vm.provision :ansible_local do |ansible|
-    #   ansible.playbook       = "provision/monitoring.yml"
-    #   ansible.verbose        = true
-    #   ansible.install        = true
-    #   ansible.limit          = "node1"
-    #   ansible.inventory_path = "inventory"
-    # end
-
-    # machine.vm.provision :ansible_local do |ansible|
-    #   ansible.playbook       = "provision/common.yml"
-    #   ansible.verbose        = true
-    #   ansible.install        = true
-    #   ansible.limit          = "node1"
-    #   ansible.inventory_path = "inventory"
-    # end
-
-    # machine.vm.provision :ansible_local do |ansible|
-    #   ansible.playbook       = "provision/zookeeper.yml"
-    #   ansible.verbose        = true
-    #   ansible.install        = true
-    #   ansible.limit          = "node1"
-    #   ansible.inventory_path = "inventory"
-    # end
-
-    # machine.vm.provision :ansible_local do |ansible|
-    #   ansible.playbook       = "provision/kafka.yml"
-    #   ansible.verbose        = true
-    #   ansible.install        = true
-    #   ansible.limit          = "node1"
-    #   ansible.inventory_path = "inventory"
-    # end
+    machine.vm.provision :ansible_local do |ansible|
+      ansible.playbook       = "ansible/playbooks/setup.yml"
+      ansible.verbose        = true
+      #ansible.limit          = "node1" # or all, ...
+      ansible.inventory_path = "ansible/inventory"
+    end
 
   end
 
