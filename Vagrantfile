@@ -9,8 +9,8 @@ end
   
   config.vm.define "node1" do |node1|
     node1.vm.network "private_network", ip: "192.168.2.111"    
-    node1.vm.provision "docker" do |docker|
-    end
+    # node1.vm.provision "docker" do |docker|
+    # end
   end
   
   # config.vm.define "node2" do |node2|
