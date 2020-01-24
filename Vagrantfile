@@ -38,37 +38,37 @@ end
       ansible.inventory_path = "inventory"
     end
 
-    machine.vm.provision :ansible_local do |ansible|
-      ansible.playbook       = "provision/monitoring.yml"
-      ansible.verbose        = true
-      ansible.install        = true
-      ansible.limit          = "node1"
-      ansible.inventory_path = "inventory"
-    end
+    # machine.vm.provision :ansible_local do |ansible|
+    #   ansible.playbook       = "provision/monitoring.yml"
+    #   ansible.verbose        = true
+    #   ansible.install        = true
+    #   ansible.limit          = "node1"
+    #   ansible.inventory_path = "inventory"
+    # end
 
-    machine.vm.provision :ansible_local do |ansible|
-      ansible.playbook       = "provision/common.yml"
-      ansible.verbose        = true
-      ansible.install        = true
-      ansible.limit          = "node1"
-      ansible.inventory_path = "inventory"
-    end
+    # machine.vm.provision :ansible_local do |ansible|
+    #   ansible.playbook       = "provision/common.yml"
+    #   ansible.verbose        = true
+    #   ansible.install        = true
+    #   ansible.limit          = "node1"
+    #   ansible.inventory_path = "inventory"
+    # end
 
-    machine.vm.provision :ansible_local do |ansible|
-      ansible.playbook       = "provision/zookeeper.yml"
-      ansible.verbose        = true
-      ansible.install        = true
-      ansible.limit          = "node1"
-      ansible.inventory_path = "inventory"
-    end
+    # machine.vm.provision :ansible_local do |ansible|
+    #   ansible.playbook       = "provision/zookeeper.yml"
+    #   ansible.verbose        = true
+    #   ansible.install        = true
+    #   ansible.limit          = "node1"
+    #   ansible.inventory_path = "inventory"
+    # end
 
-    machine.vm.provision :ansible_local do |ansible|
-      ansible.playbook       = "provision/kafka.yml"
-      ansible.verbose        = true
-      ansible.install        = true
-      ansible.limit          = "node1"
-      ansible.inventory_path = "inventory"
-    end
+    # machine.vm.provision :ansible_local do |ansible|
+    #   ansible.playbook       = "provision/kafka.yml"
+    #   ansible.verbose        = true
+    #   ansible.install        = true
+    #   ansible.limit          = "node1"
+    #   ansible.inventory_path = "inventory"
+    # end
 
   end
 
