@@ -22,11 +22,16 @@ scrape_configs:
 
   - job_name: 'kafka'
     static_configs:
-    - targets: ['localhost:7071']
+  {% for host in groups['all'] %}
+  - targets: ['{{ host }}:7071']
+  {% endfor %}
+    
     
   - job_name: 'zookeeper'
     static_configs:
-    - targets: ['localhost:7072']
+  {% for host in groups['all'] %}
+  - targets: ['{{ host }}:7072']
+  {% endfor %}
 
   # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
   - job_name: 'prometheus'

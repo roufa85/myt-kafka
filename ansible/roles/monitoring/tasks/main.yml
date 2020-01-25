@@ -8,6 +8,9 @@
       - initscripts
       - wget
     state: present
+  tags:
+    - grafana
+    - prometheus
 
 - name: Add Grafana YUM Repo
   yum_repository:
@@ -20,28 +23,38 @@
     gpgkey: https://packages.grafana.com/gpg.key
     sslverify: yes
     sslcacert: /etc/pki/tls/certs/ca-bundle.crt
+  tags:
+    - grafana
 
 - name: Install Grafana
   yum:
     name:
       - grafana
     state: present
+  tags:
+    - grafana
 
 - name: Start service grafana-server, if not started
   service:
     name: grafana-server
     state: started
+  tags:
+    - grafana
 
 - name: Enable service grafana-server
   service:
     name: grafana-server
     enabled: yes
+  tags:
+    - grafana
 
-- name: Add the user prometheus
+- name: Add the prometheus user 
   user:
     name: prometheus
     create_home: false
     shell: /bin/false
+  tags:
+    - prometheus
 
 - name: Create directories
   file:
@@ -50,50 +63,47 @@
   loop:
     - /etc/prometheus
     - /var/lib/prometheus
+  tags:
+    - prometheus
 
-- name: Cnange prom lib owner
+- name: Change prom lib owner
   file:
     path: /var/lib/prometheus
     owner: prometheus
     group: prometheus
-
-# - name: Download prometheus binaries
-#   get_url:
-#     url: https://github.com/prometheus/prometheus/releases/download/v2.7.1/prometheus-2.7.1.linux-amd64.tar.gz
-#     dest: /tmp/prometheus.tar.gz
+  tags:
+    - prometheus
 
 - name: Download & Unarchive prometheus binaries
   unarchive:
     src: https://github.com/prometheus/prometheus/releases/download/v2.7.1/prometheus-2.7.1.linux-amd64.tar.gz
     dest: /tmp
     remote_src: true
+  tags:
+    - prometheus
 
 - name: Move binaries and config
   command: mv /tmp/prometheus-2.7.1.linux-amd64/console_libraries /etc/prometheus
   ignore_errors: true
+  tags:
+    - prometheus
 
 - name: Move binaries and config
   command: mv /tmp/prometheus-2.7.1.linux-amd64/consoles /etc/prometheus
   ignore_errors: true
+  tags:
+    - prometheus
   
+  ## TODO: Update it using template
 - name: Load Yaml config
-  copy: 
-    src: files/prometheus.yml
-    dest: /etc/prometheus
+  template: 
+    src: templates/prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
     group: prometheus
     owner: prometheus
     mode: '0644'
-
-- name: Set kafka and Zookeeper Prometheus Rules
-  copy: 
-    src: "{{ item }}"
-    dest: /etc/prometheus
-    group: prometheus
-    owner: prometheus
-    mode: '0644'
-  loop:
-    - files/kafka.yml
-    - files/zookeeper.yml
+  tags:
+    - prometheus
 
 - name: Change prom lib owner
   file:
@@ -101,43 +111,59 @@
     owner: prometheus
     group: prometheus
     recurse: true
+  tags:
+    - prometheus
 
 - name: Move binaries and config
   command: mv /tmp/prometheus-2.7.1.linux-amd64/prometheus /usr/local/bin/
   ignore_errors: true
+  tags:
+    - prometheus
 
 - name: Move binaries and config
   command: mv /tmp/prometheus-2.7.1.linux-amd64/promtool /usr/local/bin/
   ignore_errors: true
+  tags:
+    - prometheus
 
 - name: Cnange prom lib owner
   file:
     path: /usr/local/bin/prometheus
     owner: prometheus
     group: prometheus
+  tags:
+    - prometheus
 
-- name: Cnange prom lib owner
+- name: Change prom lib owner
   file:
     path: /usr/local/bin/promtool
     owner: prometheus
     group: prometheus
+  tags:
+    - prometheus
 
 - name: Create Prom Service file
-  template:
-    src: templates/prometheus.service.j2
+  copy:
+    src: files/prometheus.service
     dest: /etc/systemd/system/prometheus.service
   notify:
     - reload systemctl
+  tags:
+    - prometheus
 
 - name: Start service prometheus, if not started
   service:
     name: prometheus
     state: started
+  tags:
+    - prometheus
 
 - name: Enable service prometheus
   service:
     name: prometheus
     enabled: yes
+  tags:
+    - prometheus
 
 - name: Configure Prometheus as datasource to Grafana
   uri: 
@@ -149,11 +175,13 @@
     body_format: "json"
     method: "POST"
     validate_certs: False
-    body: "{{ lookup('template', 'templates/grafana_datasource_post_payload.j2') }}"
+    body: "{{ lookup('template', 'templates/grafana_datasource_post_payload.json.j2') }}"
   register: grafana_api_result
   vars:
     prometheus_host: "http://localhost:9090"
   ignore_errors: true
+  tags:
+    - grafana_config
 
 - name: Create Kafka user in Grafana
   uri: 
@@ -165,9 +193,11 @@
     body_format: "json"
     method: "POST"
     validate_certs: False
-    body: "{{ lookup('template', 'templates/grafana_admin_post_payload.j2') }}"
+    body: "{{ lookup('file', 'files/grafana_admin_post_payload.json') }}"
   register: grafana_api_result
   ignore_errors: true
+  tags:
+    - grafana_config
 
 - name: Set Kafka user as Admin in Grafana
   uri: 
@@ -179,9 +209,11 @@
     body_format: "json"
     method: "PATCH"
     validate_certs: False
-    body: "{{ lookup('template', 'templates/grafana_admin_put_payload.j2') }}"
+    body: "{{ lookup('file', 'files/grafana_admin_put_payload.json') }}"
   register: grafana_api_result
   ignore_errors: true
+  tags:
+    - grafana_config
 
 - name: Upload dashboards
   uri: 
@@ -193,10 +225,12 @@
     body_format: "json"
     method: "POST"
     validate_certs: False
-    body: "{{ lookup('file', 'templates/{{ dashboard_payload }}') }}"
+    body: "{{ lookup('file', 'files/{{ dashboard_payload }}') }}"
   register: grafana_api_result
   vars:
     dashboard_payload: "{{ item }}"
   with_items:
-    - kafka_dashboard.json.j2
+    - kafka_dashboard.json
   ignore_errors: true
+  tags:
+    - grafana_config

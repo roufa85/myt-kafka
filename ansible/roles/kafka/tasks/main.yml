@@ -5,6 +5,8 @@
     state: directory
     owner: vagrant
     group: vagrant
+  tags:
+   - kafka
 
 - name: load Kafka server properties
   template:
@@ -13,15 +15,25 @@
     owner: vagrant
     group: vagrant
     force: true
+  # notify:
+  #   - restart kafka
+  tags:
+   - kafka
 
 - name: define Kafka service
-  template:
-    src: templates/kafka.service.j2
+  copy:
+    src: files/kafka.service
     dest: /etc/init.d/kafka
     owner: root
     group: root
     mode: a+x
     force: true
+  notify:
+    - start kafka
+  tags:
+   - kafka
 
-- name: start Kafka service
-  command: sudo service kafka start
+- name: start kafka service
+  command: service kafka start
+  tags:
+   - kafka

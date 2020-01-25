@@ -1,2 +1,9 @@
 ---
-# handlers file for ansible/kafka
+- name: start kafka  
+  command: service kafka start
+
+- name: stop kafka  
+  command: service kafka stop
+
+- name: restart kafka  
+  command: service kafka restart

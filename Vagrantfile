@@ -23,14 +23,30 @@ Vagrant.configure("2") do |config|
           end
         end
         node.vm.provision "shell", path: "scripts/update_hostkeys.sh"
-        node.vm.synced_folder "ansible/", "/vagrant/ansible"
+        node.vm.synced_folder "ansible/", "/home/vagrant/ansible"
 
         node.vm.provision :ansible_local do |ansible|
-          ansible.playbook       = "ansible/ping.yml"
+          ansible.playbook       = "ansible/hosts.yml"
           ansible.install        = true
+          ansible.verbose        = true
           ansible.limit          = "all"
           ansible.inventory_path = "ansible/inventory"
         end
+
+        node.vm.provision :ansible_local do |ansible|
+          ansible.playbook       = "ansible/monitoring.yml"
+          ansible.verbose        = true
+          ansible.limit          = "monitoring"
+          ansible.inventory_path = "ansible/inventory"
+        end
+
+        node.vm.provision :ansible_local do |ansible|
+          ansible.playbook       = "ansible/kafka.yml"
+          ansible.verbose        = true
+          ansible.limit          = "kafka"
+          ansible.inventory_path = "ansible/inventory"
+        end
+
       end
 
     end

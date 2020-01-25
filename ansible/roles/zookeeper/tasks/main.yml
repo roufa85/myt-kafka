@@ -5,6 +5,8 @@
     state: directory
     owner: vagrant
     group: vagrant
+  tags:
+   - zookeeper
 
 - name: set zk id
   template:
@@ -13,6 +15,8 @@
     owner: vagrant
     group: vagrant
     force: true
+  tags:
+   - zookeeper
 
 - name: load zk properties
   template:
@@ -21,15 +25,26 @@
     owner: vagrant
     group: vagrant
     force: true
+  with_items: "{{ groups['all'] }}"
+  # notify:
+  #  - restart zookeeper
+  tags:
+   - zookeeper
 
 - name: define zk service
-  template:
-    src: templates/zookeeper.service.j2
+  copy:
+    src: files/zookeeper.service
     dest: /etc/init.d/zookeeper
     owner: root
     group: root
     mode: a+x
     force: true
+  notify:
+   - start zookeeper
+  tags:
+   - zookeeper
 
-- name: start zk service
-  command: sudo service zookeeper start
+- name: start zookeeper service
+  command: service zookeeper start
+  tags:
+   - zookeeper

@@ -1,2 +1,9 @@
 ---
-# handlers file for ansible/zookeeper
+- name: start zookeeper  
+  command: service zookeeper start
+
+- name: stop zookeeper  
+  command: service zookeeper stop
+
+- name: restart zookeeper  
+  command: service zookeeper restart

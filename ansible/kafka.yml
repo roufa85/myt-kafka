@@ -1,0 +1,15 @@
+---
+
+- hosts: kafka
+  gather_facts: true
+  become: true
+  #serial: 1
+  roles:
+    - common
+    - zookeeper
+    - kafka
+  post_tasks:
+    - name: kafka service check
+      script: kafka_check.sh
+      args:
+        executable: /bin/bash

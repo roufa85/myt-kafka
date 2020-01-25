@@ -5,21 +5,18 @@
       - nc
       - java-1.8.0-openjdk
     state: present
+  tags:
+    - common
 
 - name: disable Swap
   command: swapoff -a
+  tags:
+    - common
 
 - name: disable fstab
   command: sed -i '/ swap / s/^/#/' /etc/fstab
-
-- name: add nodes to known hosts
-  lineinfile:
-    dest: /etc/hosts
-    line: "{{ item.addr }} {{ item.name }}"
-    state: present
-  with_items:
-    - { addr: '192.168.2.111', name: 'kafka1' }
-    - { addr: '192.168.2.111', name: 'zookeeper1' }
+  tags:
+    - common
 
 - name: Create directories
   file:
@@ -27,6 +24,8 @@
     state: directory
   loop:
     - /opt/kafka
+  tags:
+    - common
 
 - name: Download & Unarchive Kafka binaries
   unarchive:
@@ -34,12 +33,25 @@
     dest: /opt/kafka/
     remote_src: true
     extra_opts: [--strip-components=1]
+  tags:
+    - common
 
 - name: Download JMX Prometheus Exporter
   get_url:
     url: https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.12.0/jmx_prometheus_javaagent-0.12.0.jar
-    dest: /etc/prometheus
-    group: prometheus
-    owner: prometheus
+    dest: /opt/kafka
     mode: '0644'
     remote_src: true
+  tags:
+    - common
+
+- name: Set kafka and Zookeeper Prometheus Rules
+  copy: 
+    src: "{{ item }}"
+    dest: /opt/kafka
+    mode: '0644'
+  loop:
+    - files/kafka.yml
+    - files/zookeeper.yml
+  tags:
+    - common

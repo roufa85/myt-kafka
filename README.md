@@ -1,22 +1,22 @@
 # MixYourTalent - Apache Kafka
 
 
-Prerequisite:
+## Prerequisite:
 
 ```
 $ vagrant plugin install vagrant-vbguest 
 ```
 
-Spin-up & Provision:
+## Spin-up & Provision:
 
 ```
 $ vagrant up --provision
 ```
 
-Prometheus: http://192.168.2.111:9090/graph
-Grafana: http://192.168.2.111:3000/ (Username & password: kafka)
+* Prometheus: http://192.168.2.110:9090/graph
+* Grafana: http://192.168.2.110:3000/ (Username & password: kafka)
 
-Debug:
+## Debug:
 
 ```
 $ vagrant ssh controller
@@ -24,24 +24,25 @@ $ vagrant ssh controller
 
 ```
 [vagrant@localhost vagrant]$ cd /vagrant
-[vagrant@localhost vagrant]$ ansible-playbook --inventory-file=ansible/inventory -v ansible/playbooks/setup.yml 
+[vagrant@localhost vagrant]$ ansible-playbook -i ansible/inventory -v ansible/hosts.yml
 ```
 
-Create Topic:
+## Create Topic:
+
 ```
 $ vagrant ssh node1
-[vagrant@localhost ~]$ /opt/kafka/bin/kafka-topics.sh --zookeeper zookeeper1:2181/kafka --create --topic test --replication-factor 1 --partitions 3
-[vagrant@localhost ~]$ /opt/kafka/bin/kafka-topics.sh --zookeeper zookeeper1:2181/kafka --topic test --describe
+[vagrant@localhost ~]$ /opt/kafka/bin/kafka-topics.sh --zookeeper node0:2181/kafka --create --topic test --replication-factor 1 --partitions 3
+[vagrant@localhost ~]$ /opt/kafka/bin/kafka-topics.sh --zookeeper node0:2181/kafka --topic test --describe
 ```
 
-Admin Tools UI:
+## Admin Tools UI:
 
 ```
 $ sudo docker-compose -f docker-compose/kafka-manager.yml up -d
 $ sudo docker-compose -f docker-compose/zoonavigator.yml up -d
 ```
 
-ZK_HOST: 192.168.2.111:2181
+`ZK_HOST: node0:2181,node1:2181,node2:2181/kafka`
 
-Kafka Manager: http://192.168.2.111:9000/ | http://localhost:9000/
-ZooNavigator: http://192.168.2.111:7070/ | http://localhost:7070/
+* Kafka Manager: http://localhost:9000/
+* ZooNavigator: http://localhost:7070/

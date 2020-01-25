@@ -7,7 +7,7 @@ DAEMON_NAME=zookeeper
 
 PATH=$PATH:$DAEMON_PATH
 
-export EXTRA_ARGS="-name zookeeper -loggc -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.12.0.jar=7072:/etc/prometheus/zookeeper.yml"
+export EXTRA_ARGS="-name zookeeper -loggc -javaagent:/opt/kafka/jmx_prometheus_javaagent-0.12.0.jar=7072:/opt/kafka/zookeeper.yml"
 
 case "$1" in
   start)

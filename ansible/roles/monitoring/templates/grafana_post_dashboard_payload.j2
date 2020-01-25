@@ -1,5 +1,0 @@
-{
-    "dashboard": {{ (lookup('file', '/tmp/{{ dashboard_file }}') | from_json) | combine (lookup('template', 'templates/dashboard_skeleton.json.j2') | from_json) }},
-    "folderId": {{ folder_id }},
-    "overwrite": true
-}
