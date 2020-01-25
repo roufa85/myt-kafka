@@ -40,7 +40,7 @@ end
     machine.vm.provision :ansible_local do |ansible|
       ansible.playbook       = "ansible/playbooks/setup.yml"
       ansible.verbose        = true
-      #ansible.limit          = "node1" # or all, ...
+      ansible.limit          = "node1" # or all, ...
       ansible.inventory_path = "ansible/inventory"
     end
 
