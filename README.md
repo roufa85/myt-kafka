@@ -31,7 +31,7 @@ $ vagrant ssh controller
 
 ```
 $ vagrant ssh node1
-[vagrant@localhost ~]$ /opt/kafka/bin/kafka-topics.sh --zookeeper node0:2181/kafka --create --topic test --replication-factor 2 --partitions 4
+[vagrant@localhost ~]$ /opt/kafka/bin/kafka-topics.sh --zookeeper node0:2181/kafka --create --topic test --replication-factor 1 --partitions 3
 [vagrant@localhost ~]$ /opt/kafka/bin/kafka-topics.sh --zookeeper node0:2181/kafka --topic test --describe
 ```
 

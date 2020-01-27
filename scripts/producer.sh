@@ -5,5 +5,5 @@
   --record-size 1000 \
   --topic test \
   --throughput 1000 \
-  --producer-props bootstrap.servers=node0:9092,node1:9092,node2:9092 \
+  --producer-props bootstrap.servers=192.168.2.110:9092,192.168.2.111:9092,192.168.2.112:9092 \
     acks=0
