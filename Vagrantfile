@@ -10,16 +10,16 @@ Vagrant.configure("2") do |config|
 
   N = 2..0
   (N.first).downto(N.last).each do |node_id|
-    config.vm.define "node#{node_id}" do |node|
-      node.vm.hostname = "node#{node_id}"
+    config.vm.define "node-#{node_id}" do |node|
+      node.vm.hostname = "node-#{node_id}"
       node.vm.network "private_network", ip: "192.168.2.#{110+node_id}"
 
       # Only execute once the Ansible provisioner, when all the machines are up and ready.
       if node_id == 0
         (N.first).downto(N.last).each do |id|
           if id != 0
-            node.vm.provision "file", source: ".vagrant/machines/node#{id}/virtualbox/private_key",
-                                      destination: "/home/vagrant/machines/node#{id}.private_key"
+            node.vm.provision "file", source: ".vagrant/machines/node-#{id}/virtualbox/private_key",
+                                      destination: "/home/vagrant/machines/node-#{id}.private_key"
           end
         end
         node.vm.provision "shell", path: "scripts/update_hostkeys.sh"
