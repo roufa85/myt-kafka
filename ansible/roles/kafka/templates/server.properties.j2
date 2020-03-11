@@ -4,6 +4,19 @@ broker.id={{ id }}
 # change this to the hostname of each broker
 advertised.listeners=PLAINTEXT://{{ inventory_hostname }}:9092
 
+## SSL TODO
+## listeners=PLAINTEXT://0.0.0.0:9092,SSL://0.0.0.0:9093
+## advertised.listeners=PLAINTEXT://{{ ansible_host }}:9092,SSL://{{ ansible_host }}:9093
+
+## ssl.keystore.location=/home/raouf/ssl/kafka.server.keystore.jks
+## ssl.keystore.password=serversecret
+## ssl.key.password=serversecret
+## ssl.truststore.location=/home/raouf/ssl/kafka.server.truststore.jks
+## ssl.truststore.password=serversecret
+
+## IMPORTANT TO SET IT
+## ssl.endpoint.identification.algorithm=
+
 # The ability to delete topics
 delete.topic.enable=true
 

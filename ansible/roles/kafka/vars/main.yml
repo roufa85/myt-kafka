@@ -1,2 +1,4 @@
 ---
 # vars file for ansible/kafka
+
+kafka_ssl_enable: true

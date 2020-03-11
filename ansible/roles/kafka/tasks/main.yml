@@ -20,6 +20,13 @@
   tags:
    - kafka
 
+- name: adjust heap values
+  shell: |
+    sed -i 's/Xms1G/Xms512M/g' /opt/kafka/bin/kafka-server-start.sh
+    sed -i 's/Xmx1G/Xmx512M/g' /opt/kafka/bin/kafka-server-start.sh
+  tags:
+   - kafka
+
 - name: define Kafka service
   copy:
     src: files/kafka.service
