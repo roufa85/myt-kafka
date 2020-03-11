@@ -2,3 +2,4 @@
 # vars file for ansible/kafka
 
 kafka_ssl_enable: true
+kafka_ssl_password: 'kafkarocks'

@@ -16,23 +16,49 @@ $ vagrant up --provision
 * Prometheus: http://192.168.2.110:9090/graph
 * Grafana: http://192.168.2.110:3000/ (Username & password: kafka)
 
+## Tear-down
+
+In case you want to stop the VMs on your local machine:
+
+```
+$ vagrant halt
+```
+
+If you want to clean-up the whole VMs:
+```
+$ vagrant destroy --force
+```
+
 ## Debug:
 
-```
-$ vagrant ssh controller
-```
+Make your local changes, then run the command `vagrant rsync` to get the files synced, then connect to `node-0` in a separate terminal:
 
 ```
-[vagrant@localhost vagrant]$ cd /vagrant
-[vagrant@localhost vagrant]$ ansible-playbook -i ansible/inventory -v ansible/hosts.yml
+$ vagrant ssh node-0
+[vagrant@localhost vagrant]$ cd /vagrant/ansible
+[vagrant@localhost vagrant]$ ansible-playbook -i inventory -v hosts.yml
 ```
 
 ## Create Topic:
 
+### PLAINTEXT
+
 ```
-$ vagrant ssh node1
-[vagrant@localhost ~]$ /opt/kafka/bin/kafka-topics.sh --zookeeper node0:2181/kafka --create --topic test --replication-factor 1 --partitions 3
-[vagrant@localhost ~]$ /opt/kafka/bin/kafka-topics.sh --zookeeper node0:2181/kafka --topic test --describe
+$ vagrant ssh node-0
+[vagrant@node-0 ansible]$ /opt/kafka/bin/kafka-topics.sh --zookeeper node-0:2181/kafka --create --topic test --replication-factor 1 --partitions 3
+[vagrant@node-0 ansible]$ /opt/kafka/bin/kafka-topics.sh --zookeeper node-0:2181/kafka --topic test --describe
+[vagrant@node-0 ansible]$ /opt/kafka/bin/kafka-console-producer.sh --broker-list node-0:9092,node-1:9092,node-2:9092 --topic test
+[vagrant@node-0 ansible]$ /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server node-0:9092,node-1:9092,node-2:9092 --topic test --from-beginning #group.id=test1
+```
+
+### SSL
+
+We will use the same test topic and produced data:
+
+```
+vagrant ssh node-0
+[vagrant@node-0 ansible]$ /opt/kafka/bin/kafka-console-producer.sh --broker-list node-0:9093,node-1:9093,node-2:9093 --topic test --producer.config /vagrant/scripts/client.properties 
+[vagrant@node-0 ansible]$ /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server node-0:9093,node-1:9093,node-2:9093 --topic test --from-beginning --consumer.config /vagrant/scripts/client.properties #group.id=test1
 ```
 
 ## Admin Tools UI:
@@ -79,7 +105,7 @@ google-chrome http://localhost:7070/connect
 
 1. Create a first test topic with 3 partitions and 1 replicas
 ```
-vagrant ssh node0
+vagrant ssh node-0
 cd /vagrant/scripts
 bash ./topic.sh
 ```
@@ -90,13 +116,13 @@ bash ./topic.sh
 
 1. Open Console Producer and produce 3 records, we expect that each consumer will read a message
 ```
-vagrant ssh node1
+vagrant ssh node-1
 cd /vagrant/scripts
 bash ./producer.sh
 ```
 2. Open 3 Console Consumer and specify a consumer group to read from topic test
 ```
-vagrant ssh node2
+vagrant ssh node-2
 cd /vagrant/scripts
 bash ./consumer.sh
 ```

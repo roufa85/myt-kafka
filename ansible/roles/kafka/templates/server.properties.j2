@@ -1,21 +1,22 @@
 # change this for each broker
 broker.id={{ id }}
 
-# change this to the hostname of each broker
-advertised.listeners=PLAINTEXT://{{ inventory_hostname }}:9092
+listeners=PLAINTEXT://0.0.0.0:9092{% if kafka_ssl_enable -%},SSL://0.0.0.0:9093{% endif %}
 
-## SSL TODO
-## listeners=PLAINTEXT://0.0.0.0:9092,SSL://0.0.0.0:9093
-## advertised.listeners=PLAINTEXT://{{ ansible_host }}:9092,SSL://{{ ansible_host }}:9093
+advertised.listeners=PLAINTEXT://{{ ansible_host }}:9092{% if kafka_ssl_enable -%},SSL://{{ ansible_host }}:9093{% endif %}
 
-## ssl.keystore.location=/home/raouf/ssl/kafka.server.keystore.jks
-## ssl.keystore.password=serversecret
-## ssl.key.password=serversecret
-## ssl.truststore.location=/home/raouf/ssl/kafka.server.truststore.jks
-## ssl.truststore.password=serversecret
 
-## IMPORTANT TO SET IT
-## ssl.endpoint.identification.algorithm=
+{% if kafka_ssl_enable %}
+ssl.keystore.location=/opt/kafka/ssl/kafka.server.keystore.jks
+ssl.keystore.password={{ kafka_ssl_password }}
+ssl.key.password={{ kafka_ssl_password }}
+ssl.truststore.location=/opt/kafka/ssl/kafka.server.truststore.jks
+ssl.truststore.password={{ kafka_ssl_password }}
+ssl.endpoint.identification.algorithm=
+
+# ssl.client.auth=required
+# ssl.endpoint.identification.algorithm=https
+{% endif %}
 
 # The ability to delete topics
 delete.topic.enable=true

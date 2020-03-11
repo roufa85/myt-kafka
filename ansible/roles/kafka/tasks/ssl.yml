@@ -1,0 +1,35 @@
+---
+- name: create sll dir
+  file:
+    path: /opt/kafka/ssl
+    state: directory
+    owner: vagrant
+    group: vagrant
+  when: kafka_ssl_enable == true
+  tags: 
+    - kafka
+    - kafka_ssl
+
+- name: set kafka server truststore jks
+  copy:
+    src: files/kafka.server.truststore.jks
+    dest: /opt/kafka/ssl/kafka.server.truststore.jks
+    owner: vagrant
+    group: vagrant
+    mode: 0400
+  when: kafka_ssl_enable == true
+  tags: 
+    - kafka
+    - kafka_ssl
+
+- name: set kafka server keystore jks
+  copy:
+    src: files/kafka.server.keystore.jks
+    dest: /opt/kafka/ssl/kafka.server.keystore.jks
+    owner: vagrant
+    group: vagrant
+    mode: 0400
+  when: kafka_ssl_enable == true
+  tags: 
+    - kafka
+    - kafka_ssl

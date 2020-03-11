@@ -23,7 +23,9 @@ Vagrant.configure("2") do |config|
           end
         end
         node.vm.provision "shell", path: "scripts/update_hostkeys.sh"
-        node.vm.synced_folder "ansible/", "/home/vagrant/ansible"
+        node.vm.synced_folder "ansible/", "/home/vagrant/ansible", type: "rsync",
+                              rsync__exclude: [".vagrant/", ".git/"],
+                              rsync__chown: false
 
         node.vm.provision :ansible_local do |ansible|
           ansible.playbook       = "ansible/hosts.yml"

@@ -2,7 +2,7 @@
  
 
 /opt/kafka/bin/kafka-topics.sh \
-    --zookeeper node0:2181/kafka \
+    --zookeeper node-0:2181/kafka \
     --create \
     --topic test \
     --replication-factor 1 \
