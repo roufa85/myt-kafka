@@ -3,6 +3,8 @@
 
 ## Prerequisite:
 
+The full setup requires Virtualbox to be installed in your workstation and adding its plugin to vagrant:
+
 ```
 $ vagrant plugin install vagrant-vbguest 
 ```
